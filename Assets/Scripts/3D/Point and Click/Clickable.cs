@@ -10,9 +10,10 @@ public class Clickable : MonoBehaviour {
 
     private void Awake() {
         outline = gameObject.AddComponent<Outline>();
+
         gameObject.tag = "Clickable";
 
-        BoxCollider collider = gameObject.AddComponent<BoxCollider>();
+        BoxCollider collider = gameObject.GetComponent<BoxCollider>();
         collider.isTrigger = true;
 
         Rigidbody rigidBody = gameObject.AddComponent<Rigidbody>();
