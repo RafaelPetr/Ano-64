@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class NotebookTriggerManager : _TriggerManager {
-    private bool onTitle = true;
+    //private bool onTitle = true;
 
     public override void Awake() {
         base.Awake();

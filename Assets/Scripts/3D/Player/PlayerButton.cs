@@ -4,21 +4,29 @@ using UnityEngine;
 using Cinemachine;
 
 public class PlayerButton : MonoBehaviour {
-    [SerializeField]new private CinemachineVirtualCamera camera;
+    new public CinemachineVirtualCamera camera;
 
-    [System.NonSerialized]public PlayerPoint targetPoint;
+    private PlayerPoint targetPoint;
+
+    public PlayerPoint GetTarget() {
+        return targetPoint;
+    }
+
+    public void SetTarget(PlayerPoint point) {
+        targetPoint = point;
+    }
 
     public void RotatePlayer() {
-        camera.gameObject.SetActive(true);
-
-        if (targetPoint != null) {
-            PlayerController.instance.SetTarget(targetPoint);
-            PlayerController.instance.ShowMovement();
-        }
+        PlayerController.instance.Rotate(this);
+        PlayerController.instance.UpdateUI(false, true);
     }
 
-    public void MovePlayer() {
+    public void MoveForward() {
         PlayerController.instance.MoveForward();
     }
-    
+
+    public void MoveBack() {
+        PlayerController.instance.Rotate(this);
+        PlayerController.instance.UpdateUI(true, false);
+    }
 }

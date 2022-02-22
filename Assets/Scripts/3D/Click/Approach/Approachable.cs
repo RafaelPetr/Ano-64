@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Approachable : Clickable {
 
-    private List<GameObject> children = new List<GameObject>();
+    private List<Approachable> children = new List<Approachable>();
     private List<_OnApproachProperty> onApproachProperties = new List<_OnApproachProperty>();
 
     private bool rotateParent;
@@ -13,9 +13,8 @@ public class Approachable : Clickable {
     public override void Start() {
         base.Start();
 
-        for (int i = 0; i < gameObject.transform.childCount; i++) {
-            children.Add(gameObject.transform.GetChild(i).gameObject);
-        }
+        children = new List<Approachable>(GetComponentsInChildren<Approachable>());
+        children.RemoveAt(0);
 
         onApproachProperties = new List<_OnApproachProperty>(GetComponents<_OnApproachProperty>());
 
@@ -48,16 +47,16 @@ public class Approachable : Clickable {
 
         targetable = false;
 
-        foreach (GameObject child in children) {
-            child.SetActive(true);
+        foreach (Approachable child in children) {
+            child.gameObject.SetActive(true);
         }
 
         ApproachManager.instance.Approach(this,addToCache);
     }
 
     public void Desapproach() {
-        foreach (GameObject child in children) {
-            child.SetActive(false);
+        foreach (Approachable child in children) {
+            child.gameObject.SetActive(false);
         }
 
         foreach (_OnApproachProperty property in onApproachProperties) {

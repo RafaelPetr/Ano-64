@@ -10,10 +10,12 @@ public class ApproachManager : MonoBehaviour {
 
     public GameObject backButton;
 
-    public CinemachineVirtualCamera cinemachine;
-    public Transform focus;
-    private bool cameraApproach;
+    private CinemachineVirtualCamera cinemachine;
+    private Transform startTransform;
     private bool moveCamera;
+
+    private Vector3 lookAtPosition;
+    private Vector3 targetPosition;
 
     private void Awake() {
         if (instance == null) {
@@ -26,17 +28,6 @@ public class ApproachManager : MonoBehaviour {
 
     private void FixedUpdate() {
         if (moveCamera) {
-            Vector3 lookAtPosition = cinemachine.LookAt.transform.position;
-            Vector3 targetPosition;
-
-            if (cameraApproach) {
-                targetPosition = new Vector3(lookAtPosition.x,lookAtPosition.y,lookAtPosition.z-3);
-            }
-
-            else {
-                targetPosition = new Vector3(lookAtPosition.x,lookAtPosition.y,lookAtPosition.z-10);
-            }
-
             cinemachine.transform.position = Vector3.MoveTowards(cinemachine.transform.position,targetPosition,Time.deltaTime*30f);
         
             if (Vector3.Distance(cinemachine.transform.position,targetPosition) < 0.001f) {
@@ -72,14 +63,24 @@ public class ApproachManager : MonoBehaviour {
         }
 
         else {
-            ControlCamera(focus,false);
+            ControlCamera(PlayerController.instance.transform,false);
             backButton.SetActive(false);
         }
     }
 
     private void ControlCamera(Transform target, bool approach) {
+        cinemachine = PlayerController.instance.GetCamera();
+
         cinemachine.LookAt = target;
-        cameraApproach = approach;
+        lookAtPosition = cinemachine.LookAt.transform.position;
+
+        if (approach) {
+            targetPosition = new Vector3(lookAtPosition.x-10,lookAtPosition.y+1,lookAtPosition.z);
+        }
+        else {
+            targetPosition = new Vector3(lookAtPosition.x-1,lookAtPosition.y,lookAtPosition.z);
+        }
+
         moveCamera = true;
     }
 }

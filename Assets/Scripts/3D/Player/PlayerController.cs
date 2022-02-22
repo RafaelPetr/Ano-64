@@ -2,19 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class PlayerController : MonoBehaviour {
     public static PlayerController instance;
 
-    [SerializeField]private PlayerPoint originPoint;
+    private CinemachineVirtualCamera currentCamera;
 
-    [SerializeField]private GameObject movementButtons;
+    [SerializeField]private PlayerPoint currentPoint;
+    private PlayerPoint targetPoint;
+
     [SerializeField]private GameObject rotateButtons;
 
-    [SerializeField]private PlayerButton rightButton;
-    [SerializeField]private PlayerButton leftButton;
-    [SerializeField]private PlayerButton frontButton;
-    [SerializeField]private PlayerButton backButton;
+    [SerializeField]private PlayerButton rightDirection;
+    [SerializeField]private PlayerButton leftDirection;
+    [SerializeField]private PlayerButton frontDirection;
+    [SerializeField]private PlayerButton backDirection;
+
+    [SerializeField]private PlayerButton backMove;
 
     private bool move;
     private float moveSpeed = 5f;
@@ -24,44 +29,59 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void Start() {
-        ChangeMovement(originPoint);
-        SetTarget(originPoint.frontPoint);
+        transform.position = currentPoint.position;
+        SetDirectionPoints(currentPoint);
+        targetPoint = currentPoint.frontPoint;
     }
 
     private void FixedUpdate() {
-        if (move) {
-            transform.position = Vector3.MoveTowards(transform.position, originPoint.position, Time.deltaTime * moveSpeed);
-            if (Vector3.Distance(transform.position, originPoint.position) <= .05f) {
-                move = false;
-                ShowRotate();
+        if (move && targetPoint != null) {
+            transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, Time.deltaTime * moveSpeed);
+            if (Vector3.Distance(transform.position, targetPoint.position) <= .05f) {
+                StopMovement();
             }
         }
     }
 
-    public void SetTarget(PlayerPoint point) {
-        originPoint = point;
+    private void SetDirectionPoints(PlayerPoint point) {
+        rightDirection.SetTarget(point.rightPoint);
+        leftDirection.SetTarget(point.leftPoint);
+        frontDirection.SetTarget(point.frontPoint);
+        backDirection.SetTarget(point.backPoint);
+
+        backMove.SetTarget(point.frontPoint);
     }
 
-    private void ChangeMovement(PlayerPoint point) {
-        rightButton.targetPoint = point.rightPoint;
-        leftButton.targetPoint = point.leftPoint;
-        frontButton.targetPoint = point.frontPoint;
-        backButton.targetPoint = point.backPoint;
+    private void StopMovement() {
+        move = false;
+        UpdateUI(true, false);
+
+        currentPoint = targetPoint;
+        SetDirectionPoints(currentPoint);
+
+        Rotate(frontDirection);
+    }
+
+    public CinemachineVirtualCamera GetCamera() {
+        return currentCamera;
+    }
+
+    public void Rotate(PlayerButton rotateButtonClicked) {
+        if (currentCamera != null) {
+            currentCamera.gameObject.SetActive(false);
+        }
+        currentCamera = rotateButtonClicked.camera;
+        currentCamera.gameObject.SetActive(true);
+
+        targetPoint = rotateButtonClicked.GetTarget();
     }
 
     public void MoveForward() {
-        ChangeMovement(originPoint);
         move = true;
     }
 
-    public void ShowMovement() {
-        rotateButtons.SetActive(false);
-        movementButtons.SetActive(true);
+    public void UpdateUI(bool rotate, bool back) {
+        rotateButtons.SetActive(rotate);
+        backMove.gameObject.SetActive(back);
     }
-
-    private void ShowRotate() {
-        rotateButtons.SetActive(true);
-        movementButtons.SetActive(false);
-    }
-
 }
