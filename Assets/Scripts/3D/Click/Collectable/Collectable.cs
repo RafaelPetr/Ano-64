@@ -5,9 +5,11 @@ using UnityEngine;
 public class Collectable : Clickable {
     [SerializeField]private string key;
     public override void Click() {
-        base.Click();
+        if (targeted) {
+            base.Click();
 
-        PlayerData.instance.AddItem(key);
-        gameObject.SetActive(false);
+            PlayerData.instance.AddItem(key);
+            gameObject.SetActive(false);
+        }
     }
 }

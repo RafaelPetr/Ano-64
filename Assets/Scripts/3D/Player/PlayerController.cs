@@ -25,6 +25,7 @@ public class PlayerController : MonoBehaviour {
         frontButton.SetActive(targetPoint != null);
 
         transform.position = currentPoint.position;
+        currentPoint.SetCollisionClickables(true);
     }
 
     private void FixedUpdate() {
