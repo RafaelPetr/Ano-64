@@ -41,7 +41,7 @@ public class PenManager : SectionManager {
     public override void ExecuteSection(SectionObject sectionObject) {
         penObject = (PenObject)sectionObject;
 
-        foreach (PenSolved penSolved in Player.instance.penSolved) {
+        foreach (PenSolved penSolved in PlayerData.instance.penSolved) {
             if (penSolved.key == penObject.name) {
                 ShowConclusion(penSolved.answer);
                 return;
@@ -127,7 +127,7 @@ public class PenManager : SectionManager {
         answer = "<color=green>" + answer + "</color>";
 
         PenSolved penSolved = new PenSolved(penObject.name,answer);
-        Player.instance.SolvePuzzle(penSolved);
+        PlayerData.instance.SolvePuzzle(penSolved);
 
         ShowConclusion(answer);
     }

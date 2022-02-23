@@ -43,7 +43,7 @@ public class ZoomManager : SectionManager {
     }
 
     public override void EnterSection(SectionObject sectionObject) {
-        if (Player.instance.FindItem("Magnifier")) {
+        if (PlayerData.instance.FindItem("Magnifier")) {
             base.EnterSection(sectionObject);
         }
     }

@@ -6,16 +6,15 @@ using Cinemachine;
 public class ApproachManager : MonoBehaviour {
     public static ApproachManager instance;
 
+    [SerializeField]new private CinemachineVirtualCamera camera;
+
     private List<Approachable> cachedApproachs = new List<Approachable>();
 
-    public GameObject backButton;
-
-    private CinemachineVirtualCamera cinemachine;
-    private Transform startTransform;
     private bool moveCamera;
-
-    private Vector3 lookAtPosition;
+    private bool approach;
     private Vector3 targetPosition;
+
+    public GameObject backButton;
 
     private void Awake() {
         if (instance == null) {
@@ -28,11 +27,21 @@ public class ApproachManager : MonoBehaviour {
 
     private void FixedUpdate() {
         if (moveCamera) {
-            cinemachine.transform.position = Vector3.MoveTowards(cinemachine.transform.position,targetPosition,Time.deltaTime*30f);
+            if (approach) {
+                camera.transform.position = Vector3.MoveTowards(camera.transform.position,targetPosition,Time.deltaTime*30f);
         
-            if (Vector3.Distance(cinemachine.transform.position,targetPosition) < 0.001f) {
-                moveCamera = false;
+                if (Vector3.Distance(camera.transform.position,targetPosition) < 0.001f) {
+                    moveCamera = false;
+                }
             }
+            else {
+                camera.transform.localPosition = Vector3.MoveTowards(camera.transform.localPosition,targetPosition,Time.deltaTime*30f);
+            
+                if (Vector3.Distance(camera.transform.localPosition,targetPosition) < 0.001f) {
+                    moveCamera = false;
+                }
+            }
+            
         }
     }
 
@@ -50,7 +59,7 @@ public class ApproachManager : MonoBehaviour {
             cachedApproachs[0].AdjustParent(approachable);
         }
 
-        ControlCamera(cachedApproachs[0].transform,true);
+        ControlCamera(cachedApproachs[0]);
         backButton.SetActive(true);
     }
 
@@ -63,22 +72,21 @@ public class ApproachManager : MonoBehaviour {
         }
 
         else {
-            ControlCamera(PlayerController.instance.transform,false);
+            ControlCamera();
             backButton.SetActive(false);
         }
     }
 
-    private void ControlCamera(Transform target, bool approach) {
-        cinemachine = PlayerController.instance.GetCamera();
-
-        cinemachine.LookAt = target;
-        lookAtPosition = cinemachine.LookAt.transform.position;
-
-        if (approach) {
-            targetPosition = new Vector3(lookAtPosition.x-10,lookAtPosition.y+1,lookAtPosition.z);
+    private void ControlCamera(Approachable target = null) {
+        if (target != null) {
+            approach = true;
+            targetPosition = target.cameraPosition;
         }
         else {
-            targetPosition = new Vector3(lookAtPosition.x-1,lookAtPosition.y,lookAtPosition.z);
+            camera.LookAt = null;
+            camera.transform.localEulerAngles = Vector3.zero;
+            approach = false;
+            targetPosition = Vector3.back;
         }
 
         moveCamera = true;

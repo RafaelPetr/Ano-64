@@ -8,12 +8,14 @@ public class Clickable : MonoBehaviour {
     [System.NonSerialized]public bool targetable = true;
     [System.NonSerialized]public bool targeted;
 
+    [System.NonSerialized]new public BoxCollider collider;
+
     private void Awake() {
         outline = gameObject.AddComponent<Outline>();
 
         gameObject.tag = "Clickable";
 
-        BoxCollider collider = gameObject.GetComponent<BoxCollider>();
+        collider = gameObject.GetComponent<BoxCollider>();
         collider.isTrigger = true;
 
         Rigidbody rigidBody = gameObject.AddComponent<Rigidbody>();
@@ -26,6 +28,8 @@ public class Clickable : MonoBehaviour {
         outline.enabled = false;
         outline.OutlineColor = Color.red;
         outline.OutlineWidth = 10f;
+        
+        collider.enabled = false;
 
         ClickManager.instance.mouseEnter.AddListener(MouseEnter);
         ClickManager.instance.click.AddListener(Click);

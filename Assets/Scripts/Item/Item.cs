@@ -20,7 +20,7 @@ public class Item : MonoBehaviour {
             spriteRenderer.enabled = show;
         }
 
-        if (Player.instance.FindItem(key)) {
+        if (PlayerData.instance.FindItem(key)) {
             if (show) {
                 gameObject.SetActive(!show);
             }
@@ -31,7 +31,7 @@ public class Item : MonoBehaviour {
     }
 
     public void PickUp() {
-        Player.instance.AddItem(key);
+        PlayerData.instance.AddItem(key);
         ShowItem();
     }
 }

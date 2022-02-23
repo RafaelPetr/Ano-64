@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Approachable : Clickable {
 
+    public Vector3 cameraPosition;
+
     private List<Approachable> children = new List<Approachable>();
     private List<_OnApproachProperty> onApproachProperties = new List<_OnApproachProperty>();
 
@@ -21,6 +23,7 @@ public class Approachable : Clickable {
         foreach (_OnApproachProperty property in onApproachProperties) {
             property.enabled = false;
         }
+
     }
 
     private void FixedUpdate() {

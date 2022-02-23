@@ -10,12 +10,12 @@ public static class SaveSystem {
         private static extern void SyncDB();
     #endif
     
-    public static void SavePlayer(int slot, Player player) {
+    public static void SavePlayer(int slot, PlayerData player) {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/player" + slot + ".save";
 
         FileStream fileStream = new FileStream(path, FileMode.Create);
-        PlayerData data = new PlayerData(player);
+        SaveData data = new SaveData(player);
         formatter.Serialize(fileStream, data);
 
         fileStream.Close();

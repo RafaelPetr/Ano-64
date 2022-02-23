@@ -15,7 +15,7 @@ public class PenObject : SectionObject {
     public string[] answers;
     
     public override void Execute(Transform transform = null) {
-        if (Player.instance.FindItem("Pen")) {
+        if (PlayerData.instance.FindItem("Pen")) {
             PenManager.selfInstance.EnterSection(this);
         }
     }

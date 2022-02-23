@@ -10,7 +10,15 @@ public class PlayerPoint : MonoBehaviour {
     public PlayerPoint frontPoint;
     public PlayerPoint backPoint;
 
+    public Clickable[] clickables;
+
     private void Awake() {
         position = transform.position;
+    }
+
+    public void SetCollisionClickables(bool value) {
+        foreach (Clickable clickable in clickables) {
+            clickable.collider.enabled = value;
+        }
     }
 }

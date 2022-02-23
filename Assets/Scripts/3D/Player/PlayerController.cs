@@ -1,26 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Cinemachine;
 
 public class PlayerController : MonoBehaviour {
     public static PlayerController instance;
 
-    private CinemachineVirtualCamera currentCamera;
-
+    [SerializeField]private GameObject frontButton;
     [SerializeField]private PlayerPoint currentPoint;
+
+    private Quaternion targetRotation;
     private PlayerPoint targetPoint;
 
-    [SerializeField]private GameObject rotateButtons;
-
-    [SerializeField]private PlayerButton rightDirection;
-    [SerializeField]private PlayerButton leftDirection;
-    [SerializeField]private PlayerButton frontDirection;
-    [SerializeField]private PlayerButton backDirection;
-
-    [SerializeField]private PlayerButton backMove;
-
+    private bool rotate;
     private bool move;
     private float moveSpeed = 5f;
 
@@ -29,59 +21,79 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void Start() {
-        transform.position = currentPoint.position;
-        SetDirectionPoints(currentPoint);
         targetPoint = currentPoint.frontPoint;
+        frontButton.SetActive(targetPoint != null);
+
+        transform.position = currentPoint.position;
     }
 
     private void FixedUpdate() {
-        if (move && targetPoint != null) {
+        if (move) {
             transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, Time.deltaTime * moveSpeed);
             if (Vector3.Distance(transform.position, targetPoint.position) <= .05f) {
                 StopMovement();
             }
         }
-    }
-
-    private void SetDirectionPoints(PlayerPoint point) {
-        rightDirection.SetTarget(point.rightPoint);
-        leftDirection.SetTarget(point.leftPoint);
-        frontDirection.SetTarget(point.frontPoint);
-        backDirection.SetTarget(point.backPoint);
-
-        backMove.SetTarget(point.frontPoint);
+        if (rotate) {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * moveSpeed);
+            if (Quaternion.Angle(transform.rotation, targetRotation) <= .05f) {
+                StopRotation();
+            }
+        }
     }
 
     private void StopMovement() {
         move = false;
-        UpdateUI(true, false);
 
         currentPoint = targetPoint;
-        SetDirectionPoints(currentPoint);
+        transform.position = currentPoint.position;
+        currentPoint.SetCollisionClickables(true);
 
-        Rotate(frontDirection);
+        SetTargetPoint();
     }
 
-    public CinemachineVirtualCamera GetCamera() {
-        return currentCamera;
+    private void StopRotation() {
+        rotate = false;
+        transform.rotation = targetRotation;
     }
 
-    public void Rotate(PlayerButton rotateButtonClicked) {
-        if (currentCamera != null) {
-            currentCamera.gameObject.SetActive(false);
+    public void Move() {
+        if (!move && targetPoint != null) {
+            currentPoint.SetCollisionClickables(false);
+            move = true;
         }
-        currentCamera = rotateButtonClicked.camera;
-        currentCamera.gameObject.SetActive(true);
-
-        targetPoint = rotateButtonClicked.GetTarget();
     }
 
-    public void MoveForward() {
-        move = true;
+    public void Rotate(Vector3 rotation) {
+        if (!move) {
+            if (targetRotation != null) {
+                transform.rotation = targetRotation;
+            }
+            
+            targetRotation = Quaternion.Euler(rotation.x,rotation.y,rotation.z) * transform.rotation;
+
+            SetTargetPoint();
+
+            rotate = true;
+        }
     }
 
-    public void UpdateUI(bool rotate, bool back) {
-        rotateButtons.SetActive(rotate);
-        backMove.gameObject.SetActive(back);
+    private void SetTargetPoint() {
+        switch (targetRotation.eulerAngles.y/90) {
+            case 0:
+                targetPoint = currentPoint.frontPoint;
+                break;
+            case 1:
+                targetPoint = currentPoint.rightPoint;
+                break;
+            case 2:
+                targetPoint = currentPoint.backPoint;
+                break;
+            case 3:
+                targetPoint = currentPoint.leftPoint;
+                break;
+        }
+
+        frontButton.SetActive(targetPoint != null);
     }
 }

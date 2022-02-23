@@ -28,7 +28,7 @@ public class SaveSlot : MonoBehaviour {
     }
 
     public void Save() {
-        SaveSystem.SavePlayer(slotNumber, Player.instance);
+        SaveSystem.SavePlayer(slotNumber, PlayerData.instance);
         SectionManager.instance.ExitSection();
     } 
 
@@ -36,11 +36,11 @@ public class SaveSlot : MonoBehaviour {
         PlayerData data = SaveSystem.LoadPlayer(slotNumber);
 
         if (data != null) {
-            Player.instance.chapter = data.chapter;
-            Player.instance.difficulty = data.difficulty;
-            Player.instance.page = data.page;
-            Player.instance.itemsFound = new List<string>(data.itemsFound);
-            Player.instance.penSolved = new List<PenSolved>(data.penSolved);
+            PlayerData.instance.chapter = data.chapter;
+            PlayerData.instance.difficulty = data.difficulty;
+            PlayerData.instance.page = data.page;
+            PlayerData.instance.itemsFound = new List<string>(data.itemsFound);
+            PlayerData.instance.penSolved = new List<PenSolved>(data.penSolved);
             SceneController.instance.Load(data.page);
         }
         SectionManager.instance.ExitSection();

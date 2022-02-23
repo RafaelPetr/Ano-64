@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class PlayerData {
+public class SaveData {
 
     public string chapter;
     public string timestamp;
@@ -12,7 +12,7 @@ public class PlayerData {
     public string[] itemsFound;
     public PenSolved[] penSolved;
 
-    public PlayerData(Player player) {
+    public SaveData(PlayerData player) {
         chapter = player.chapter;
         timestamp = player.timestamp;
         difficulty = player.difficulty;
