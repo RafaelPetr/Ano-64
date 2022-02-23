@@ -80,7 +80,8 @@ public class ApproachManager : MonoBehaviour {
     private void ControlCamera(Approachable target = null) {
         if (target != null) {
             approach = true;
-            targetPosition = target.cameraPosition;
+            targetPosition = target.transform.position + target.cameraOffset;
+            camera.LookAt = target.transform;
         }
         else {
             camera.LookAt = null;

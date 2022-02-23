@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemDependent : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+public abstract class ItemDependent : Clickable {
+    [SerializeField]private string keyItem;
+
+    public override void Click() {
+        base.Click();
+
+        if (PlayerData.instance.FindItem(keyItem)) {
+            OnClickFunction();
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public abstract void OnClickFunction();
 }

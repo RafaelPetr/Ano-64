@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine;
 
 public class PlayerController : MonoBehaviour {
     public static PlayerController instance;
@@ -79,7 +78,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    private void SetTargetPoint() {
+    public void SetTargetPoint() {
         switch (targetRotation.eulerAngles.y/90) {
             case 0:
                 targetPoint = currentPoint.frontPoint;
@@ -95,6 +94,6 @@ public class PlayerController : MonoBehaviour {
                 break;
         }
 
-        frontButton.SetActive(targetPoint != null);
+        frontButton.SetActive(targetPoint != null && targetPoint.gameObject.activeSelf);
     }
 }
